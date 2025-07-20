@@ -1,6 +1,6 @@
 ![version](https://img.shields.io/badge/version-20R4-5682DF)
 ![platform](https://img.shields.io/static/v1?label=platform&message=mac-intel%20|%20mac-arm%20|%20win-64&color=blue)
-[![License badge displaying GitHub license for this project](https://img.shields.io/github/license/kirkbrooks/DateUtils)](LICENSE)
+[![License badge displaying GitHub license for this project](https://img.shields.io/github/license/kirkbrooks/DateUtils/main/LICENSE)](LICENSE)
 ![downloads](https://img.shields.io/github/downloads/kirkbrooks/DateUtils/total)
 
 # DateUtils
