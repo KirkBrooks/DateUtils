@@ -147,7 +147,7 @@ This project aims to provide a comprehensive date formatting solution for the 4D
 
 ## License
 
-This project is open source. Please check the license file or contact the author for specific licensing terms.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Author
 
