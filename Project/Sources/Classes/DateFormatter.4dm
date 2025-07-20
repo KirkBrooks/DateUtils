@@ -6,7 +6,7 @@
 
 */
 
-// Core format properties - functional out of the box
+// Pattern storage - functional out of the box
 property patterns : Object:={}
 
 shared singleton Class constructor
@@ -15,26 +15,34 @@ shared singleton Class constructor
 	This.patterns.screenFormat:="MMM d, yyyy"
 	This.patterns.apiFormat:="yyyy-MM-ddTHH:mm:ss.SSSZ"
 	
-Function format()->$dateStr : Text
+Function format() : Text
 	// Core formatting method with flexible parameter handling
 	// Returns empty string on any error - safe for web/remote processes
+	
 	var $params : Collection
 	var $pattern : Text
+	var $dateStr : Text
+	var $inputType1; $inputType2 : Integer
+	var $date : Date
+	var $time : Time
 	
 	$params:=Copy parameters
 	
-	// Pattern is always the last parameter
-	If ($params.length<2) || ($params.length>3)
-		return ""  // Need at least input + pattern
+	// Need at least input + pattern
+	If ($params.length<2)
+		return ""
 	End if 
 	
+	// Pattern is always the last parameter
 	$pattern:=$params[$params.length-1]
+	
 	If ($pattern="")
 		return ""
 	End if 
 	
 	Case of 
-		: ($params.length=2)  // format($input; $pattern)
+		: ($params.length=2)
+			// Single input + pattern: format($input; $pattern)
 			$inputType1:=Value type($params[0])
 			
 			Case of 
@@ -49,17 +57,23 @@ Function format()->$dateStr : Text
 				: ($inputType1=Is real)
 					// Unix epoch timestamp
 					$date:=This._epochToDate($params[0])
-					If ($date#!00-00-00!)
-						$dateStr:=This._formatDate($date; $pattern)
-					End if 
+					$dateStr:=This._formatDate($date; $pattern)
+					
+				: ($inputType1=Is text) && (Match regex("^\\d{4}-\\d{2}-\\d{2}$"; $params[0]; 1))
+					// Date-only ISO string like "2025-04-05"
+					$date:=Date($params[0]+"T00:00:00")
+					$dateStr:=This._formatDate($date; $pattern)
+					
+				: ($inputType1=Is text) && (Match regex("^\\d{1,2}/\\d{1,2}/\\d{2,4}$"; $params[0]; 1))
+					// US/European date format like "01/02/2025" - let system locale handle it
+					$date:=Date($params[0])
+					$dateStr:=This._formatDate($date; $pattern)
 					
 				: ($inputType1=Is text)
-					// ISO timestamp string
+					// Assume full ISO timestamp like "2025-04-05T14:30:00Z"
 					$date:=Date($params[0])
 					$time:=Time($params[0])
-					If ($date#!00-00-00!)
-						$dateStr:=This._formatDateTime($date; $time; $pattern)
-					End if 
+					$dateStr:=This._formatDateTime($date; $time; $pattern)
 					
 				: ($inputType1=Is object)
 					// Object with date/time properties
@@ -71,18 +85,16 @@ Function format()->$dateStr : Text
 					
 			End case 
 			
-		: ($params.length=3)  // format($date; $time; $pattern)
+		: ($params.length=3)
+			// Date + time + pattern: format($date; $time; $pattern)
 			$inputType1:=Value type($params[0])
 			$inputType2:=Value type($params[1])
 			
 			Case of 
 				: ($inputType1=Is date) && ($inputType2=Is time)
-					// Date + Time + Pattern
 					$date:=$params[0]
 					$time:=$params[1]
-					If ($date#!00-00-00!)
-						$dateStr:=This._formatDateTime($date; $time; $pattern)
-					End if 
+					$dateStr:=This._formatDateTime($date; $time; $pattern)
 					
 				Else 
 					// Invalid parameter combination
@@ -91,90 +103,91 @@ Function format()->$dateStr : Text
 			End case 
 			
 		Else 
-			// Invalid parameter count
+			// Too many parameters
 			$dateStr:=""
 			
 	End case 
 	
+	return $dateStr
 	
 	//mark: --- Default format shortcuts
 Function forLog($input : Variant) : Text
-	return This.format($input; This.logFormat)
+	return This.format($input; This.patterns.logFormat)
 	
 Function forScreen($input : Variant) : Text
-	return This.format($input; This.screenFormat)
+	return This.format($input; This.patterns.screenFormat)
 	
 Function forAPI($input : Variant) : Text
-	return This.format($input; This.apiFormat)
+	return This.format($input; This.patterns.apiFormat)
 	
 	//mark: --- Private implementation
 Function _formatDate($date : Date; $pattern : Text) : Text
 	// Format date using 4D's String() command
-	var $dateStr : Text
+	var $result : Text
 	
 	If ($date=!00-00-00!)
 		return ""
 	End if 
 	
 	Try
-		$dateStr:=String($date; $pattern)
+		$result:=String($date; $pattern)
 	Catch
-		$dateStr:=""
+		$result:=""
 	End try
 	
-	return $dateStr
+	return $result
 	
 Function _formatTime($time : Time; $pattern : Text) : Text
 	// Format time using 4D's String() command
-	var $dateStr : Text
+	var $result : Text
 	
 	Try
-		$dateStr:=String($time; $pattern)
+		$result:=String($time; $pattern)
 	Catch
-		$dateStr:=""
+		$result:=""
 	End try
 	
-	return $dateStr
+	return $result
 	
 Function _formatDateTime($date : Date; $time : Time; $pattern : Text) : Text
 	// Format combined date and time
-	var $dateStr : Text
+	var $result : Text
 	
 	If ($date=!00-00-00!)
 		return ""
 	End if 
 	
 	Try
-		$dateStr:=String($date; $pattern; $time)
+		$result:=String($date; $pattern; $time)
 	Catch
-		$dateStr:=""
+		$result:=""
 	End try
 	
-	return $dateStr
+	return $result
 	
 Function _epochToDate($epoch : Real) : Date
 	// Convert Unix epoch to 4D date
 	// Returns null date on error
-	var $dateStr : Date
+	var $result : Date
 	
 	If ($epoch<=0)
 		return !00-00-00!
 	End if 
 	
 	Try
-		$dateStr:=!1970-01-01!+($epoch/86400)
+		$result:=!1970-01-01!+($epoch/86400)
 	Catch
-		$dateStr:=!00-00-00!
+		$result:=!00-00-00!
 	End try
 	
-	return $dateStr
+	return $result
 	
 Function _formatObject($obj : Object; $pattern : Text) : Text
 	// Handle object input with date/time properties
 	// Look for common property names
 	var $date : Date
 	var $time : Time
-	var $dateStr : Text
+	var $result : Text
 	
 	If ($obj=Null)
 		return ""
@@ -202,11 +215,11 @@ Function _formatObject($obj : Object; $pattern : Text) : Text
 		End case 
 		
 		If ($date#!00-00-00!)
-			$dateStr:=This._formatDateTime($date; $time; $pattern)
+			$result:=This._formatDateTime($date; $time; $pattern)
 		End if 
 		
 	Catch
-		$dateStr:=""
+		$result:=""
 	End try
 	
-	return $dateStr
+	return $result
