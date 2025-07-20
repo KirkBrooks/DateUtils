@@ -120,6 +120,23 @@ Function forScreen($input : Variant) : Text
 Function forAPI($input : Variant) : Text
 	return This.format($input; This.patterns.apiFormat)
 	
+shared Function addPattern($name : Text; $pattern : Text) : Object
+	// Add a new pattern and create a convenience function
+	// Thread-safe for shared singleton
+	
+	If ($name="") || ($pattern="")
+		return This
+	End if 
+	
+	// Add pattern to patterns object (Use/End use handled automatically)
+	This.patterns[$name]:=$pattern
+	
+	// Create convenience function dynamically
+	// $1 in the formula is the value passed into the function call
+	This[$name]:=Formula(This.format($1; This.patterns[$name]))
+	
+	return This
+	
 	//mark: --- Private implementation
 Function _formatDate($date : Date; $pattern : Text) : Text
 	// Format date using 4D's String() command

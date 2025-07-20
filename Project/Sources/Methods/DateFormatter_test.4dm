@@ -17,6 +17,12 @@ var $input_epoch : Real
 var $input_obj : Object
 var $dates : Collection:=[]
 
+DateFormatter.addPattern("newPattern"; "YYYY MMMMM DD")
+
+$dateStr:=DateFormatter.newPattern(Current date)
+
+
+
 // === Test Timestamp strings ===
 $input_str:=Timestamp
 $dates.push("=== TIMESTAMP INPUT: "+$input_str+" ===")
@@ -99,11 +105,11 @@ $dates.push("Bad pattern: '"+DateFormatter.format(Current date; "bad-pattern")+"
 $dates.push("")
 
 // === Test dynamic pattern addition ===
-DateFormatter.patterns.customTest:="'Today is' EEEE"
-$dates.push("=== DYNAMIC PATTERN ===")
-$dates.push("Added customTest pattern: "+DateFormatter.patterns.customTest)
-$dates.push("Result: "+DateFormatter.format(Current date; DateFormatter.patterns.customTest))
-$dates.push("")
+//DateFormatter.patterns.customTest:="'Today is' EEEE"
+//$dates.push("=== DYNAMIC PATTERN ===")
+//$dates.push("Added customTest pattern: "+DateFormatter.patterns.customTest)
+//$dates.push("Result: "+DateFormatter.format(Current date; DateFormatter.patterns.customTest))
+//$dates.push("")
 
 ALERT($dates.join("\r"))
 
