@@ -1,11 +1,7 @@
 //%attributes = {}
 /* Purpose: 
  ------------------
-DateFormatter_test ()
- Created by: Kirk Brooks as Designer, Created: 07/20/25, 09:40:07
-*/
-
-/* DateFormatter Test Suite
+ DateFormatter Test Suite
  Testing all input types and format patterns
  ------------------
 */
@@ -17,15 +13,10 @@ var $input_epoch : Real
 var $input_obj : Object
 var $dates : Collection:=[]
 
-DateFormatter.addPattern("newPattern"; "YYYY MMMMM DD")
-
-$dateStr:=DateFormatter.newPattern(Current date)
-
-
-
 // === Test Timestamp strings ===
 $input_str:=Timestamp
 $dates.push("=== TIMESTAMP INPUT: "+$input_str+" ===")
+$dates.push("Default: "+DateFormatter.forDefault($input_str))
 $dates.push("Log: "+DateFormatter.forLog($input_str))
 $dates.push("API: "+DateFormatter.forAPI($input_str))
 $dates.push("Screen: "+DateFormatter.forScreen($input_str))
@@ -105,17 +96,15 @@ $dates.push("Bad pattern: '"+DateFormatter.format(Current date; "bad-pattern")+"
 $dates.push("")
 
 // === Test dynamic pattern addition ===
-//DateFormatter.patterns.customTest:="'Today is' EEEE"
-//$dates.push("=== DYNAMIC PATTERN ===")
-//$dates.push("Added customTest pattern: "+DateFormatter.patterns.customTest)
-//$dates.push("Result: "+DateFormatter.format(Current date; DateFormatter.patterns.customTest))
-//$dates.push("")
+DateFormatter.addPattern("customTest"; "'Today is' EEEE")
+$dates.push("=== DYNAMIC PATTERN ===")
+$dates.push("Added customTest pattern: "+DateFormatter.patterns.customTest)
+$dates.push("Using patterns object: "+DateFormatter.format(Current date; DateFormatter.patterns.customTest))
+$dates.push("Using dynamic function: "+DateFormatter.customTest(Current date))
+$dates.push("")
+
 
 ALERT($dates.join("\r"))
 
-// Output all results
-//For each ($line; $dates)
-//TRACE($line)
-//End for each 
 
 

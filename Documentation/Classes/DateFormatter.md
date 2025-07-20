@@ -6,6 +6,7 @@ A comprehensive singleton class for handling all date/time formatting needs in 4
 
 ```4d
 // Basic usage with default formats
+$default := DateFormatter.forDefault(Current date)
 $log := DateFormatter.forLog(Current date)
 $display := DateFormatter.forScreen(Current date)
 $api := DateFormatter.forAPI(Timestamp)
@@ -80,10 +81,11 @@ Supported object properties: `date`, `created`, `timestamp`, `datetime`, `time`,
 
 ## Default Formats
 
-The DateFormatter comes with three built-in formats:
+The DateFormatter comes with four built-in formats:
 
 | Format | Pattern | Example Output |
 |--------|---------|----------------|
+| `default` | `"MMM d, yyyy"` | "Dec 25, 2025" |
 | `logFormat` | `"yyyy-MM-dd HH:mm:ss.SSS"` | "2025-12-25 14:30:45.123" |
 | `screenFormat` | `"MMM d, yyyy"` | "Dec 25, 2025" |
 | `apiFormat` | `"yyyy-MM-ddTHH:mm:ss.SSSZ"` | "2025-12-25T14:30:45.123Z" |
@@ -92,9 +94,25 @@ The DateFormatter comes with three built-in formats:
 
 ```4d
 // Quick access to default formats
+$default := DateFormatter.forDefault($input)
 $log := DateFormatter.forLog($input)
 $display := DateFormatter.forScreen($input)  
 $api := DateFormatter.forAPI($input)
+```
+
+### Default Pattern Property
+
+The `default` pattern can be accessed and modified using computed properties:
+
+```4d
+// Get current default pattern
+$pattern := DateFormatter.defaultPattern  // "MMM d, yyyy"
+
+// Change default pattern for your project
+DateFormatter.defaultPattern := "dd/MM/yyyy"
+
+// Now forDefault() uses the new pattern
+$result := DateFormatter.forDefault($date)  // "25/12/2025"
 ```
 
 ## Custom Patterns
@@ -213,7 +231,7 @@ Pattern additions use automatic `Use/End use` blocks to ensure thread safety.
 
 - **European date formats** (dd/MM/yyyy) depend on system locale settings
 - **Timezone conversion** not included in Stage 1 (future enhancement)
-- **Pattern validation** is basic (relies on 4D's String() error handling)
+- **No pattern validation** - malformed patterns will be apparent immediately during development
 
 ## Examples
 
@@ -240,9 +258,12 @@ $result := DateFormatter.format($date; $time; "MMM d 'at' h:mm a")
 // Current timestamp
 $now := DateFormatter.forLog(Timestamp)
 
+// Default formatting
+$readable := DateFormatter.forDefault(Current date)
+
 // Unix epoch
 $epoch := 1735142400
-$readable := DateFormatter.forScreen($epoch)
+$display := DateFormatter.forScreen($epoch)
 
 // ISO date string
 $iso := "2025-12-25"

@@ -6,14 +6,30 @@
 
 */
 
+/*  DateFormatter class
+ Created by: Designer, Created: 07/20/25
+ ------------------
+ Singleton for handling all date/time formatting needs
+ Stage 1: Core foundation with input type detection
+ 
+*/
+
 // Pattern storage - functional out of the box
 property patterns : Object:={}
 
 shared singleton Class constructor
 	// Self-configuring - no initialization needed
+	This.patterns.default:="MMM d, yyyy"
 	This.patterns.logFormat:="yyyy-MM-dd HH:mm:ss.SSS"
 	This.patterns.screenFormat:="MMM d, yyyy"
 	This.patterns.apiFormat:="yyyy-MM-ddTHH:mm:ss.SSSZ"
+	
+	//mark:  --- getters
+Function get defaultPattern : Text
+	return This.patterns.default
+	
+shared Function set defaultPattern($pattern : Text)
+	This.patterns.default:=$pattern
 	
 Function format() : Text
 	// Core formatting method with flexible parameter handling
@@ -111,6 +127,9 @@ Function format() : Text
 	return $dateStr
 	
 	//mark: --- Default format shortcuts
+Function forDefault($input : Variant) : Text
+	return This.format($input; This.patterns.default)
+	
 Function forLog($input : Variant) : Text
 	return This.format($input; This.patterns.logFormat)
 	
