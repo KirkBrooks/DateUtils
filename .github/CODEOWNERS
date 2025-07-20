@@ -1,0 +1,16 @@
+# Code Owners
+# This file defines who should be automatically requested for review
+# when changes are made to specific parts of the repository
+
+# Global owner - all files require review from Kirk Brooks
+* @KirkBrooks
+
+# Core DateFormatter class - requires owner review
+/Project/Sources/Classes/DateFormatter.4dm @KirkBrooks
+
+# Documentation changes
+/Documentation/ @KirkBrooks
+*.md @KirkBrooks
+
+# Project configuration
+/Project/DateUtils.4DProject @KirkBrooks

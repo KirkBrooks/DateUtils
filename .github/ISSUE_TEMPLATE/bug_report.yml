@@ -1,0 +1,73 @@
+name: Bug Report
+description: File a bug report to help us improve DateUtils
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - KirkBrooks
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! This helps us improve DateUtils for everyone.
+
+  - type: input
+    id: 4d-version
+    attributes:
+      label: 4D Version
+      description: What version of 4D are you using?
+      placeholder: e.g., 4D v20 R5
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-sample
+    attributes:
+      label: Code Sample
+      description: If applicable, provide a minimal code sample that demonstrates the issue
+      render: 4d
+      placeholder: |
+        // Example code that causes the issue
+        $result := DateFormatter.format("invalid-date"; "MMM d, yyyy")
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: What environment are you running in?
+      options:
+        - 4D Single User
+        - 4D Server
+        - 4D Remote
+        - Web Process
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
